@@ -1,0 +1,30 @@
+{
+	"name": "PassEdit",
+	"author": ["apple502j"],
+	"url": "https://github.com/InternationalScratchWiki/PassEdit",
+	"descriptionmsg": "passedit-desc",
+	"license-name": "GPL-3.0-or-later",
+	"AutoloadClasses": {
+		"PassEdit": "src/PassEdit.php"
+	},
+    "MessagesDirs": {
+		"PassEdit": [
+			"i18n"
+		]
+	},
+    "AvailableRights": [
+		"editpassword"
+	],
+    "GroupPermissions": {
+		"*": {
+			"editpassword": false
+		},
+		"bureaucrat": {
+			"editpassword": true
+		}
+	},
+	"SpecialPages": {
+		"EditPassword": "PassEdit"
+	},
+    "manifest_version": 2
+}
