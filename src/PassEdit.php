@@ -96,7 +96,8 @@ class PassEdit extends SpecialPage {
 
     function execute($par) {
         $request = $this->getRequest();
-		$output = $this->getOutput();
+        $output = $this->getOutput();
+        $this->checkReadOnly();
         $output->setPageTitle(wfMessage('editpassword-title')->escaped());
         if (!MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'editpassword')) {
             $output->showErrorPage('error', 'passedit-unauthorized');
