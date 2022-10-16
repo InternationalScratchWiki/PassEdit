@@ -1,0 +1,18 @@
+{
+    "passedit-desc": "Description of the extension",
+    "right-editpassword": "Name of the editpassword user right",
+    "action-editpassword": "Action description of editing other users' passwords and emails",
+    "editpassword": "Title of the page to edit passwords",
+    "editpassword-title": "Title of the page to edit passwords and emails",
+    "passedit-invalid-email": "Error message for invalid email address",
+    "passedit-anon": "Error message for unknown username",
+    "passedit-success": "Message displayed after successful edit",
+    "passedit-notupdated": "Message displayed if there is no change",
+    "passedit-info": "Usage instruction displayed on the password edit page",
+    "passedit-username": "Label of the username input",
+    "passedit-password": "Label of the password input",
+    "passedit-password2": "Label of the password confirmation input",
+    "passedit-email": "Label of email input",
+    "passedit-password-nomatch": "Error message for passwords that do not match",
+    "passedit-submit": "Label of the submit button"
+}
