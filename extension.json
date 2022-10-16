@@ -24,7 +24,14 @@
 		}
 	},
 	"SpecialPages": {
-		"EditPassword": "PassEdit"
+		"EditPassword": {
+			"class": "PassEdit",
+			"services": [
+				"PasswordFactory",
+				"DBLoadBalancer",
+				"UserFactory"
+			]
+		}
 	},
     "manifest_version": 2
 }
