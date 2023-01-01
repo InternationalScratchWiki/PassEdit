@@ -26,7 +26,7 @@ class PassEdit extends SpecialPage {
         return $csrftoken;
     }
 
-    function isCSRF($session, $csrftoken) {
+    function isCSRFTokenInvalid($session, $csrftoken) {
         return !$session->getToken()->match($csrftoken);
     }
 
@@ -52,14 +52,14 @@ class PassEdit extends SpecialPage {
     }
 
     function handleSubmission(&$request, &$output) {
-        if ($this->isCSRF($request->getSession(), $request->getText('csrftoken'))) {
+        if ($this->isCSRFTokenInvalid($request->getSession(), $request->getText('csrftoken'))) {
             $output->showErrorPage('error', 'sessionfailure');
             return;
         }
         $password = $request->getText('password');
         $password2 = $request->getText('password2');
         if ($password !== $password2) {
-            // can use != because both are user-provided
+            // can use !== because both are user-provided
             $output->showErrorPage('error', 'passedit-password-nomatch');
             return;
         }
