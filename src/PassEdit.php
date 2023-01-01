@@ -1,20 +1,39 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class PassEdit extends SpecialPage {
-    function __construct() {
-		parent::__construct('EditPassword', 'editpassword');
-	}
+    private PasswordFactory $passwordFactory;
+    private ILoadBalancer $loadBalancer;
+    private UserFactory $userFactory;
+
+    function __construct(PasswordFactory $passwordFactory, ILoadBalancer $loadBalancer, UserFactory $userFactory) {
+        parent::__construct('EditPassword', 'editpassword');
+        $this->passwordFactory = $passwordFactory;
+        $this->loadBalancer = $loadBalancer;
+        $this->userFactory = $userFactory;
+    }
 
     function getGroupName() {
         return 'users';
     }
 
+    function setCSRFToken($session) {
+        $session->persist();
+        $csrftoken = $session->getToken();
+        $session->save();
+        return $csrftoken;
+    }
+
+    function isCSRFTokenInvalid($session, $csrftoken) {
+        return !$session->getToken()->match($csrftoken);
+    }
+
     function editAccountInfo($user_id, $password, $email) {
         $next = array();
         if (!empty($password)) {
-            $next['user_password'] = MediaWikiServices::getInstance()->getPasswordFactory()->newFromPlaintext($password)->toString();
+            $next['user_password'] = $this->passwordFactory->newFromPlaintext($password)->toString();
         }
         if (!empty($email)) {
             $next['user_email'] = $email;
@@ -22,7 +41,7 @@ class PassEdit extends SpecialPage {
         if (empty($next)) {
             return false;
         }
-        $dbw = wfGetDB(DB_MASTER);
+        $dbw = $this->loadBalancer->getConnection(defined('DB_PRIMARY') ? DB_PRIMARY : DB_MASTER);
         $dbw->update(
             'user',
             $next,
@@ -33,24 +52,24 @@ class PassEdit extends SpecialPage {
     }
 
     function handleSubmission(&$request, &$output) {
-        if (!$this->getUser()->matchEditToken($request->getVal('csrftoken'))) {
+        if ($this->isCSRFTokenInvalid($request->getSession(), $request->getText('csrftoken'))) {
             $output->showErrorPage('error', 'sessionfailure');
             return;
         }
-        $password = $request->getVal('password');
-        $password2 = $request->getVal('password2');
-        if ($password != $password2) {
-            // can use != because both are user-provided
+        $password = $request->getText('password');
+        $password2 = $request->getText('password2');
+        if ($password !== $password2) {
+            // can use !== because both are user-provided
             $output->showErrorPage('error', 'passedit-password-nomatch');
             return;
         }
-        $email = $request->getVal('email');
-        $username = $request->getVal('username');
+        $email = $request->getText('email');
+        $username = $request->getText('username');
         if (!empty($email) && !Sanitizer::validateEmail($email)) {
             $output->showErrorPage('error', 'passedit-invalid-email');
             return;
         }
-        $user = User::newFromName($username);
+        $user = $this->userFactory->newFromName($username);
         if (!$user || $user->isAnon()) {
             $output->showErrorPage('error', 'passedit-anon');
             return;
@@ -64,6 +83,7 @@ class PassEdit extends SpecialPage {
     }
 
     function renderForm(&$request, &$output) {
+        $session = $request->getSession();
         $disp = Html::openElement(
             'form',
             [
@@ -72,7 +92,7 @@ class PassEdit extends SpecialPage {
             ]
         );
         $disp .= Html::rawElement('p', [], wfMessage('passedit-info')->parse());
-        $disp .= Html::hidden('csrftoken', $this->getUser()->getEditToken());
+        $disp .= Html::hidden('csrftoken', $this->setCSRFToken($session));
         $disp .= Html::openElement('p');
         $disp .= Html::element('label', ['for' => 'mw-passedit-username'], wfMessage('passedit-username')->text());
         $disp .= Html::element('input', ['type' => 'text', 'id' => 'mw-passedit-username', 'name' => 'username']);
@@ -99,10 +119,7 @@ class PassEdit extends SpecialPage {
         $output = $this->getOutput();
         $this->checkReadOnly();
         $output->setPageTitle(wfMessage('editpassword-title')->escaped());
-        if (!MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'editpassword')) {
-            $output->showErrorPage('error', 'passedit-unauthorized');
-            return;
-        }
+        $this->checkPermissions();
         if ($request->wasPosted()) {
             return $this->handleSubmission($request, $output);
         }

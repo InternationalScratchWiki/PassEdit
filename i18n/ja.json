@@ -1,0 +1,18 @@
+{
+    "passedit-desc": "他人のパスワードとメールアドレスを変更する。",
+    "right-editpassword": "他人のパスワードとメールアドレスを変更",
+    "action-editpassword": "他人のパスワードとメールアドレスを変更",
+    "editpassword": "パスワードを変更",
+    "editpassword-title": "パスワードとメールアドレスを変更",
+    "passedit-invalid-email": "メールアドレスが無効です。",
+    "passedit-anon": "ユーザーが存在しません。",
+    "passedit-success": "パスワードとメールアドレスが変更されました。",
+    "passedit-notupdated": "パスワードとメールアドレスは変更されませんでした。",
+    "passedit-info": "他人のアカウントのパスワードとメールアドレスを変更できます。入力欄を空欄にした場合現在の値を使用します。",
+    "passedit-username": "ユーザー名",
+    "passedit-password": "パスワード",
+    "passedit-password2": "パスワード (確認)",
+    "passedit-email": "メールアドレス",
+    "passedit-password-nomatch": "パスワードが一致しません。",
+    "passedit-submit": "送信"
+}

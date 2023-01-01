@@ -1,10 +1,10 @@
 {
     "passedit-desc": "Edit someone's password and email",
     "right-editpassword": "Edit other users' password and email",
+    "action-editpassword": "edit other users' password and email",
     "editpassword": "Edit password",
     "editpassword-title": "Edit password and email",
     "passedit-invalid-email": "Email is invalid.",
-    "passedit-unauthorized": "You are not allowed to edit other accounts' passwords.",
     "passedit-anon": "The user does not exist.",
     "passedit-success": "Password and/or email edited.",
     "passedit-notupdated": "Neither password nor email was changed.",
